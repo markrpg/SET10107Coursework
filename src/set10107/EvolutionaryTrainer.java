@@ -2,6 +2,7 @@ package set10107;
 
 import java.util.Arrays;
 
+
 public class EvolutionaryTrainer extends NeuralNetwork {
 
 	public EvolutionaryTrainer() {
@@ -48,6 +49,11 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		System.out.print("\nAccuracy on test data = ");
 		System.out.println(testAcc);
 		System.out.println("\nEnd NN training demo");
+		
+		//Print full console out as textfile 
+		//Get Timestamp
+		//String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+	    //FileOutputStream file = new FileOutputStream(timeStamp + " - Function " + dataSet + " - Test.txt");
 
 	}
 
@@ -167,6 +173,7 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 	 * NEEDS REPLACED with proper method
 	 * this code just returns exact copies of the parents
 	 */
+	///* Original Crossover function
 	private Individual[] reproduce(Individual parent1, Individual parent2) {
 		int numGenes = parent1.chromosome.length;
 		int cross = Parameters.random.nextInt(numGenes);
@@ -190,6 +197,39 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		return result;
 	} // Reproduce
 	
+	
+	/*
+	 * Single-Point crossover
+	 */
+	/*
+	private Individual[] reproduce(Individual parent1, Individual parent2)
+	{
+		int numGenes = parent1.chromosome.length;
+		int cross = Parameters.random.nextInt(numGenes);
+		
+		Individual child1 = new Individual();
+		Individual child2 = new Individual();
+		
+		for (int i = 0; i < numGenes; ++i)
+		{
+			if(i < cross)
+			{
+			child1.chromosome[i] = parent1.chromosome[i];
+			child2.chromosome[i] = parent2.chromosome[i];
+			} else
+			{
+		    child1.chromosome[i] = parent2.chromosome[i];
+		    child2.chromosome[i] = parent1.chromosome[i];
+			}
+		}
+		
+		Individual[] result = new Individual[2];
+		result[0] = child1;
+		result[1] = child2;
+		return result;
+		
+	}
+	*/
 	
 	/**
 	 * Mutation 
