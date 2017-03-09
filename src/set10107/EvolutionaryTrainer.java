@@ -11,7 +11,11 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 
 	public static void main(String[] args) {
 
+		//Datasets to use 
+		//String[] dataSets = {"A","B","C"};
 		String dataSet = "A";
+		
+		
 		Parameters.setDataSet(dataSet);
 
 		System.out.println("\nThe training data is:");
@@ -50,10 +54,6 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		System.out.println(testAcc);
 		System.out.println("\nEnd NN training demo");
 		
-		//Print full console out as textfile 
-		//Get Timestamp
-		//String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-	    //FileOutputStream file = new FileOutputStream(timeStamp + " - Function " + dataSet + " - Test.txt");
 
 	}
 
@@ -81,16 +81,18 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 			 */			
 
 			//Select 2 good Individuals 
-			Individual parent1 = select(population); // 2 good Individuals
-			Individual parent2 = select(population);
+			Individual parent1 = Selections.rouletteSelection(population); // 2 good Individuals
+			Individual parent2 = Selections.rouletteSelection(population);
 			
 			//Generate 2 new children by crossover (includes call to mutation) 
-			Individual[] children = reproduce(parent1, parent2); 
+			Individual[] children = Crossovers.crossoverSinglePoint(parent1, parent2); 
+			
+			//Mutate children
+			children = Mutations.uniformMutation(children);
 			
 			//Evaluate the new individuals
 			evaluateIndividuals(children);
 			
-
 			//Replace (sorts the population and replaces the two worst individuals)
 			replace(children[0], children[1], population); 
 			
@@ -152,93 +154,7 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		}
 		return population;
 	}
-
 	
-	/**
-	 * Selection -- 
-	 * 
-	 * NEEDS REPLACED with proper selection
-	 * this just returns a copy of a random member of the population
-	 */
-	private Individual select(Individual[] population) {		
-		int popSize = population.length;
-		Individual parent = population[Parameters.random.nextInt(popSize)].copy();
-		return parent;
-	}
-
-	
-	/**
-	 * Crossover / Reproduction
-	 * 
-	 * NEEDS REPLACED with proper method
-	 * this code just returns exact copies of the parents
-	 */
-	///* Original Crossover function
-	private Individual[] reproduce(Individual parent1, Individual parent2) {
-		int numGenes = parent1.chromosome.length;
-		int cross = Parameters.random.nextInt(numGenes);
-
-		Individual child1 = new Individual();
-		Individual child2 = new Individual();
-
-		for (int i = 0; i < numGenes; ++i)
-			child1.chromosome[i] = parent1.chromosome[i];
-
-		for (int i = 0; i < numGenes; ++i)
-			child2.chromosome[i] = parent2.chromosome[i];
-
-		mutate(child1);
-		mutate(child2);
-
-		Individual[] result = new Individual[2];
-		result[0] = child1;
-		result[1] = child2;
-
-		return result;
-	} // Reproduce
-	
-	
-	/*
-	 * Single-Point crossover
-	 */
-	/*
-	private Individual[] reproduce(Individual parent1, Individual parent2)
-	{
-		int numGenes = parent1.chromosome.length;
-		int cross = Parameters.random.nextInt(numGenes);
-		
-		Individual child1 = new Individual();
-		Individual child2 = new Individual();
-		
-		for (int i = 0; i < numGenes; ++i)
-		{
-			if(i < cross)
-			{
-			child1.chromosome[i] = parent1.chromosome[i];
-			child2.chromosome[i] = parent2.chromosome[i];
-			} else
-			{
-		    child1.chromosome[i] = parent2.chromosome[i];
-		    child2.chromosome[i] = parent1.chromosome[i];
-			}
-		}
-		
-		Individual[] result = new Individual[2];
-		result[0] = child1;
-		result[1] = child2;
-		return result;
-		
-	}
-	*/
-	
-	/**
-	 * Mutation 
-	 * 
-	 * Not Implemented
-	 */
-	private void mutate(Individual child) {
-
-	}
 
 	/**
 	 * 
