@@ -81,14 +81,14 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 			 */			
 
 			//Select 2 good Individuals 
-			Individual parent1 = Selections.rouletteSelection(population); // 2 good Individuals
-			Individual parent2 = Selections.rouletteSelection(population);
+			Individual parent1 = Selections.tournamentSelection(population,2); // 2 good Individuals
+			Individual parent2 = Selections.tournamentSelection(population,2);
 			
-			//Generate 2 new children by crossover (includes call to mutation) 
-			Individual[] children = Crossovers.crossoverSinglePoint(parent1, parent2); 
+			//Generate 2 new children by crossover 
+			Individual[] children = Crossovers.crossoverDoublePoint(parent1, parent2); 
 			
 			//Mutate children
-			children = Mutations.uniformMutation(children);
+			children = Mutations.negativeInversionMutation(children);
 			
 			//Evaluate the new individuals
 			evaluateIndividuals(children);

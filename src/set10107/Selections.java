@@ -41,6 +41,36 @@ public class Selections
 		return population[Parameters.popSize - j];
 	}
 	
+	/**
+	 * Selects the best individual from two random individuals
+	 * @param population - the population to select from
+	 * @param k - number of iterations to conduct tournament
+	 * @return - return best found individual
+	 */
+	static Individual tournamentSelection(Individual[] population, int k)
+	{
+		//Holds best individual, select random individual at start
+		Individual bestYet = population[Parameters.random.nextInt(population.length)];;
+		
+		//Iterate through population finding the best individual according to k number
+		for(int i = 0; i<k; ++i)
+		{
+			//Randomly select a competitor
+			Individual competitorIndividual = population[Parameters.random.nextInt(population.length)];
+			
+			//If competitor beats best individual yet set new best
+			if(competitorIndividual.error < bestYet.error)
+			{
+				bestYet = competitorIndividual;
+			}
+		}
+		
+		//After iteration return best individual
+		return bestYet;
+	}
+	
+	
+	
 	
 
 }

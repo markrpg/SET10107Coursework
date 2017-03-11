@@ -62,5 +62,42 @@ public class Crossovers
 		return result;
 		
 	}
+	
+	/*
+	 * Double-Point crossover
+	 */
+	static Individual[] crossoverDoublePoint(Individual parent1, Individual parent2)
+	{
+		int numGenes = parent1.chromosome.length;
+		int crossPoint = Parameters.random.nextInt(numGenes);
+		int crossPoint2 = Parameters.random.nextInt(numGenes - crossPoint);
+		
+		Individual child1 = new Individual();
+		Individual child2 = new Individual();
+		
+		for (int i = 0; i < numGenes; ++i)
+		{
+			if(i < crossPoint)
+			{
+			child1.chromosome[i] = parent1.chromosome[i];
+			child2.chromosome[i] = parent2.chromosome[i];
+			} 
+			else if(i < (numGenes - crossPoint2))
+			{
+		    child1.chromosome[i] = parent2.chromosome[i];
+		    child2.chromosome[i] = parent1.chromosome[i];
+			} else
+			{
+			child1.chromosome[i] = parent1.chromosome[i];
+			child2.chromosome[i] = parent2.chromosome[i];
+			}
+		}
+		
+		Individual[] result = new Individual[2];
+		result[0] = child1;
+		result[1] = child2;
+		return result;
+		
+	}
 
 }
