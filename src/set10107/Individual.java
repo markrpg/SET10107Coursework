@@ -6,7 +6,17 @@ public class Individual implements Comparable<Individual> {
 
 	public double[] chromosome; // represents a solution
 	public double error; // smaller values are better for minimization
-
+	//Hold copy of weights
+	public String weights;
+	//Hold tested Training error
+	double trainingError;
+	//Hold tested test error
+	double testError;
+	//Hold dataset variation for running average individual
+	String dataSetVariation;
+	//Hold dataset A,B,C
+	String dataset;
+	
 	public Individual() {
 		this.chromosome = new double[Parameters.numGenes];
 		for (int i = 0; i < this.chromosome.length; i++) {

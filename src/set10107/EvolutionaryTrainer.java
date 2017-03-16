@@ -1,63 +1,124 @@
 package set10107;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.io.*;
 
 public class EvolutionaryTrainer extends NeuralNetwork {
 
 	public EvolutionaryTrainer() {
 		super();
 	}
-
-	public static void main(String[] args) {
-
-		//Datasets to use 
-		//String[] dataSets = {"A","B","C"};
-		String dataSet = "A";
+	
+	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchFieldException 
+	{
+		//Datasets to use for function approximation
+		String[] dataSets = {"A","B","C"};
 		
+		//Operator Variations to run
+		String[] operatorVariations = 
+			{
+					"SR_UMUT_CSP",
+					"SR_NMUT_CDP",
+					"SR_UMUT_CDP",
+					"SR_NMUT_CSP",
+					"ST_UMUT_CSP",
+					"ST_NMUT_CDP",
+					"ST_UMUT_CDP",
+					"ST_NMUT_CSP"	
+			};
 		
-		Parameters.setDataSet(dataSet);
-
-		System.out.println("\nThe training data is:");
-		showMatrix(Parameters.trainData, Parameters.trainData.length, 1, true);
-
-		System.out.println("The test data is:");
-		showMatrix(Parameters.testData, Parameters.testData.length, 1, true);		
+		//Array to hold best 50 individuals from all operator variations
+		Individual[] outputData = new Individual[operatorVariations.length * dataSets.length];
 		
-		/**
-		 * train the NN using our EA
-		 */
-		EvolutionaryTrainer nn = new EvolutionaryTrainer();
-		System.out.println("\nBeginning training");
-		double[] bestWeights = nn.train();
-		
-		/**
-		 * Show best weights found
-		 */
-		System.out.println("Training complete");
-		System.out.println("\nFinal weights and bias values:");
-		showVector(bestWeights, 10, 3, true);
+		//Start training for all datasets over set operator variations
+		for(int i = 0; i < dataSets.length; ++i)
+		{
+			//Set data set
+			Parameters.setDataSet(dataSets[i]);
+			
+			//Temporary individual to hold total average error
+			Individual tempIndividual = new Individual();
+			
+			//train over set operator variations		
+			for(int j = 0; j < operatorVariations.length; ++j)
+			{	
+				//Local string array to save 50 best individuals
+				Individual[] lastFiftyBest = new Individual[50];
+				
+				//Get 50 best 
+				for(int k = 0; k < Parameters.numRuns; ++k)
+				{
+					/**
+					 * train the NN using our EA
+					 */
+					EvolutionaryTrainer nn = new EvolutionaryTrainer();
+					Individual bestIndividual = nn.train(operatorVariations[j]);
 
-		/**
-		 * Show accuracy on training data
-		 */
-		nn.setWeights(bestWeights);
-		double trainAcc = nn.testNetwork(Parameters.trainData);
-		System.out.print("\nAccuracy on training data = ");
-		System.out.println(trainAcc);
+					/**
+					 * Show best weights found
+					 */
+					System.out.println("Training complete: Function " + dataSets[i] + "\nOperators: " + operatorVariations[j]);
+					System.out.println("\nFinal weights and bias values:");
+					bestIndividual.weights = showVector(bestIndividual.chromosome, 10, 3, true);
 
-		/**
-		 * Show accuracy on unseen test data
-		 */
-		double testAcc = nn.testNetwork(Parameters.testData);
-		System.out.print("\nAccuracy on test data = ");
-		System.out.println(testAcc);
-		System.out.println("\nEnd NN training demo");
+					/**
+					 * Show accuracy on training data
+					 */
+					nn.setWeights(bestIndividual.chromosome);
+					double trainAcc = nn.testNetwork(Parameters.trainData);
+					System.out.print("\nAccuracy on training data = ");
+					System.out.println(trainAcc);
+					bestIndividual.trainingError = trainAcc;
+
+					/**
+					 * Show accuracy on unseen test data
+					 */
+					double testAcc = nn.testNetwork(Parameters.testData);
+					System.out.print("\nAccuracy on test data = ");
+					System.out.println(testAcc);
+					System.out.println("\nEnd NN training demo");
+					bestIndividual.testError = testAcc;
+					
+					//Get best individual of this run
+					lastFiftyBest[k] = bestIndividual;
+					
+					//Add running averages to local individual 
+					tempIndividual.testError += bestIndividual.testError;
+				}
+				
+				//Set temp individuals datasetvariation string for running averages & dataset
+				tempIndividual.testError = tempIndividual.testError / Parameters.numRuns;
+				tempIndividual.dataSetVariation = operatorVariations[j];
+				tempIndividual.dataset = dataSets[i];
+				
+				//Add tempIndividual to running averages individual array
+				outputData[j] = tempIndividual;
+				
+				//Output last 50 runs, dataset and operator variation to csv
+				try 
+				{
+					//Write 
+					writeOutputCSV(dataSets[i], operatorVariations[j], lastFiftyBest);
+					
+				} catch (IOException e) { }
+				
+			}
+			
+		}
 		
+		//Write out averages for each function and operator variation
+		try 
+		{
+			writeOutputCSV("allaverages", null, outputData);
+		} catch (IOException e) {}
 
 	}
 
-	public double[] train() {
+	public Individual train(String operationVariation) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchFieldException {
 		/**
 		 *  initialize the population
 		 */
@@ -67,28 +128,32 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		 * used to store a copy of the best Individual in the population
 		 */
 		Individual bestIndividual = getBest(population);
+		
+		//Get methods for each operator
+		List<String> operatorList = Arrays.asList(operationVariation.split("_"));
+		Method selection = Selections.class.getMethod(Constants.class.getDeclaredField(operatorList.get(0).trim()).get(null).toString(), Individual[].class);
+		Method mutation = Mutations.class.getMethod(Constants.class.getDeclaredField(operatorList.get(1).trim()).get(null).toString(), Individual[].class);
+		Method crossover = Crossovers.class.getMethod(Constants.class.getDeclaredField(operatorList.get(2).trim()).get(null).toString(), Individual.class, Individual.class);
 
+		//Running Best Error
+	
 		/**
 		 * main EA processing loop
 		 */
 		int gen = 0;
 		boolean done = false;
-		while (gen < Parameters.maxGeneration && done == false) {
-
-			/**
-			 *  this is a skeleton EA - you need to add the methods
-			 *  you can also change the EA if you want
-			 */			
-
+		while (gen < Parameters.maxGeneration && done == false) 
+		{
+			
 			//Select 2 good Individuals 
-			Individual parent1 = Selections.tournamentSelection(population,2); // 2 good Individuals
-			Individual parent2 = Selections.tournamentSelection(population,2);
+			Individual parent1 = (Individual) selection.invoke(null, new Object[] {population});	
+			Individual parent2 = (Individual) selection.invoke(null, new Object[] {population});
 			
 			//Generate 2 new children by crossover 
-			Individual[] children = Crossovers.crossoverDoublePoint(parent1, parent2); 
+			Individual[] children = (Individual[]) crossover.invoke(null, (Object)parent1 , (Object)parent2);
 			
 			//Mutate children
-			children = Mutations.negativeInversionMutation(children);
+			children = 	(Individual[]) mutation.invoke(null, (Object)children);
 			
 			//Evaluate the new individuals
 			evaluateIndividuals(children);
@@ -101,9 +166,7 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 
 			//check that the best hasn't improved
 			bestIndividual = getBest(population);
-			
-			System.out.println(gen + "\t" + bestIndividual);
-			
+		
 			//check our termination criteria
 			if(bestIndividual.error < Parameters.exitError){
 				done = true;
@@ -111,9 +174,84 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 			
 			++gen;
 		}
-		return bestIndividual.chromosome;
+		
+		return bestIndividual;
 	} // Train
 
+	/**
+	 * Method to output run data to CSV
+	 * @param operatorVariation - Containing Operator Variation constant
+	 * @param outputIndividuals - 50 Best individuals for that the run
+	 * @param dataSet - the dataset being used
+	 * @throws IOException 
+	 */
+	@SuppressWarnings("resource")
+	private static void writeOutputCSV(String dataSet, String operatorVariation, Individual[] outputIndividuals) throws IOException
+	{
+		//If individual dataset print
+		if(dataSet != "allaverages")
+		{
+		//New file for test
+		File file = new File(dataSet + "_" + operatorVariation + "_" + Parameters.numRuns + ".csv");
+		file.createNewFile();
+		
+		//Used for calculating total MSE
+		double avgMSE = 0;
+		
+		//Calculate average Training accuracy
+		double avgTrainAccuracy = 0;
+				
+		//Write contents to file readable in CSV
+		FileWriter writer = new FileWriter(file);
+		
+		for(int i = 0; i < Parameters.numRuns; ++i)
+		{
+			//Hold individual 
+			Individual tempInd = (Individual) outputIndividuals[i];
+			
+			//Test Error
+			double testError = tempInd.testError;
+			
+			//Add error to MSE for calculating total MSE
+			avgMSE += testError;
+			
+			//add training accuracy for average
+			avgTrainAccuracy += tempInd.trainingError;
+			
+			//Write to File
+			writer.write(dataSet + "," + operatorVariation + "," + i + "," + testError + "," + tempInd.weights + "\n");	
+		}
+		
+		//Calculate total MSE and training accuracy
+		avgMSE = avgMSE / Parameters.numRuns;
+		avgTrainAccuracy = avgTrainAccuracy / Parameters.numRuns;
+		writer.write("Mean Squared Error = " + avgMSE + "\n" + "Training Accuracy Average = " + avgTrainAccuracy);
+	    writer.flush();
+	    writer.close();
+		}
+		//If not individual dataset print all mean average squared error for all datasets
+		else
+		{
+			//New file for all averages
+			File file = new File(dataSet + "_num_of_variations_" + outputIndividuals.length + ".csv");
+			file.createNewFile();
+			
+			//Write contents to file readable in CSV
+			FileWriter writer = new FileWriter(file);
+			
+			//print out averages for variations
+			for(Individual individual : outputIndividuals)
+			{
+				//Write to File
+				writer.write(individual.dataset + "," + individual.dataSetVariation + "," + individual.testError + "\n");	
+			}
+			
+			//Close writer
+		    writer.flush();
+		    writer.close();
+		}
+		
+	}
 	
 	/**
 	 * Sets the fitness (mean squared error) of the individual passed as parameters
@@ -183,16 +321,32 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		population[population.length - 3] = immigrant; 	
 	}
 
-	static void showVector(double[] vector, int valsPerRow, int decimals, boolean newLine) {
-		for (int i = 0; i < vector.length; ++i) {
+	static String showVector(double[] vector, int valsPerRow, int decimals, boolean newLine) 
+	{
+		StringBuilder returnVector = new StringBuilder();
+		for (int i = 0; i < vector.length; ++i) 
+		{
 			if (i % valsPerRow == 0)
+			{
 				System.out.println("");
+				returnVector.append("");
+			}
 			if (vector[i] >= 0.0)
+			{
 				System.out.print(" ");
+				returnVector.append(" ");
+			}
+			returnVector.append(vector[i] + " ");
 			System.out.print(vector[i] + " ");
 		}
 		if (newLine == true)
+		{
+			returnVector.append("");
 			System.out.println("");
+		}
+		
+		//Return weights
+		return returnVector.toString();
 	}
 
 	static void showMatrix(double[][] matrix, int numRows, int decimals, boolean newLine) {

@@ -35,7 +35,7 @@ public class Crossovers
 	/*
 	 * Single-Point crossover
 	 */
-	static Individual[] crossoverSinglePoint(Individual parent1, Individual parent2)
+	public static Individual[] crossoverSinglePoint(Individual parent1, Individual parent2)
 	{
 		int numGenes = parent1.chromosome.length;
 		int crossPoint = Parameters.random.nextInt(numGenes);
@@ -66,7 +66,7 @@ public class Crossovers
 	/*
 	 * Double-Point crossover
 	 */
-	static Individual[] crossoverDoublePoint(Individual parent1, Individual parent2)
+	public static Individual[] crossoverDoublePoint(Individual parent1, Individual parent2)
 	{
 		int numGenes = parent1.chromosome.length;
 		int crossPoint = Parameters.random.nextInt(numGenes);

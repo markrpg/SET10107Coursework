@@ -21,6 +21,11 @@ public class Parameters {
 	public static double[][] testData;
 	public static int numGenes;
 	public final static Random random = new Random(seed);
+	//New Parameters
+	//Parameter for number of individual to have tournment
+	public final static int numTournamentSelection = 2;
+	//number of runs to carry out for each operator variation
+	public final static int numRuns = 50;
 	
 	public static void setDataSet(String dataSet){
 		trainData = Reader.getTrainingData(dataSet);

@@ -9,7 +9,7 @@ public class Mutations
 	 * @param children - children for mutation.
 	 * @return - mutated children.
 	 */
-	static Individual[] uniformMutation(Individual[] children)
+	public static Individual[] uniformMutation(Individual[] children)
 	{
 		Random rand = new Random();
 		
@@ -37,7 +37,7 @@ public class Mutations
 	 * @param children - children for mutation.
 	 * @return - mutated children.
 	 */
-	static Individual[] negativeInversionMutation(Individual[] children)
+	public static Individual[] negativeInversionMutation(Individual[] children)
 	{
 		Random rand = new Random();
 		
