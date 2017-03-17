@@ -147,6 +147,16 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		boolean done = false;
 		while (gen < Parameters.maxGeneration && done == false) 
 		{
+			//Get E
+			Individual[] elites = performPopulationElitism(population).clone();
+			
+			//Add 50% of the elites to population for selection, mutation, crossover
+			for(int i = 0; i<(int)Math.abs(Parameters.eliteNum * 0.5); ++i)
+			{
+				//Randomly insert elites into the population
+				int random = Parameters.random.nextInt(population.length - 1);
+				population[random] = elites[i];
+			}
 			
 			//Select 2 good Individuals 
 			Individual parent1 = (Individual) selection.invoke(null, new Object[] {population});	
@@ -157,6 +167,14 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 			
 			//Mutate children
 			children = 	(Individual[]) mutation.invoke(null, (Object)children);
+			
+			//Add other 50% of the elites to population randomly
+			for(int i = (int)Math.abs(Parameters.eliteNum * 0.5); i<Parameters.eliteNum; ++i)
+			{
+				//Randomly insert 5% of elites into the population
+				int random = Parameters.random.nextInt(population.length - 1);
+				population[random] = elites[i];
+			}
 			
 			//Evaluate the new individuals
 			evaluateIndividuals(children);
@@ -181,6 +199,32 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		return bestIndividual;
 	} // Train
 
+	/**
+	 * Performs elitism by sorting a percentage of fittest population 
+	 * @param population - Population to perform elitism
+	 * @return - New population with percentage of fittest individuals from last generation
+	 */
+	private Individual[] performPopulationElitism(Individual[] population)
+	{
+		//Sort population
+		Individual[] popSorter = population;
+		
+		//Sort
+		Arrays.sort(popSorter);
+		
+		//New elite generation 
+		Individual[] newEliteGeneration = new Individual[Parameters.eliteNum];
+		
+		//Iterate through old generation adding fittest individuals to new elite generation
+		for(int i = 0; i < Parameters.eliteNum;++i)
+		{
+			newEliteGeneration[i] = popSorter[i];
+		}
+		
+		//Return new generation containing last generations elites
+		return newEliteGeneration;
+	}
+	
 	/**
 	 * Method to output run data to CSV
 	 * @param operatorVariation - Containing Operator Variation constant

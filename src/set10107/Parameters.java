@@ -26,6 +26,9 @@ public class Parameters {
 	public final static int numTournamentSelection = 2;
 	//number of runs to carry out for each operator variation
 	public final static int numRuns = 50;
+	//Elitism parameters
+	//Set maximum elitism to 10% of the maximum population
+	public final static int eliteNum = (int) Math.abs(popSize * 0.10);
 	
 	public static void setDataSet(String dataSet){
 		trainData = Reader.getTrainingData(dataSet);
