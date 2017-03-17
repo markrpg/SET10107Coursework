@@ -33,6 +33,8 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		
 		//Array to hold best 50 individuals from all operator variations
 		Individual[] outputData = new Individual[operatorVariations.length * dataSets.length];
+		//count for outputdata
+		int count = 0;
 		
 		//Start training for all datasets over set operator variations
 		for(int i = 0; i < dataSets.length; ++i)
@@ -40,12 +42,12 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 			//Set data set
 			Parameters.setDataSet(dataSets[i]);
 			
-			//Temporary individual to hold total average error
-			Individual tempIndividual = new Individual();
-			
 			//train over set operator variations		
 			for(int j = 0; j < operatorVariations.length; ++j)
 			{	
+				//Temporary individual to hold total average error
+				Individual tempIndividual = new Individual();
+				
 				//Local string array to save 50 best individuals
 				Individual[] lastFiftyBest = new Individual[50];
 				
@@ -96,7 +98,8 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 				tempIndividual.dataset = dataSets[i];
 				
 				//Add tempIndividual to running averages individual array
-				outputData[j] = tempIndividual;
+				outputData[count] = tempIndividual;
+				count++;
 				
 				//Output last 50 runs, dataset and operator variation to csv
 				try 
