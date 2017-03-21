@@ -293,6 +293,14 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 				writer.write(individual.dataset + "," + individual.dataSetVariation + "," + individual.testError + "\n");	
 			}
 			
+			//Print out parameters used for this experiment
+			writer.write("Hidden Layer Count: " + Parameters.numHidden + "\n");
+			writer.write("Population Size: " + Parameters.popSize + "\n");
+			writer.write("Exit Error: " + Parameters.exitError + "\n");
+			writer.write("Mutation Rate: " + Parameters.mutateRate + "\n");
+			writer.write("Tournament Selection Number: " + Parameters.numTournamentSelection + "\n");
+			writer.write("Elite Population Size: " + Parameters.eliteNum);
+			
 			//Close writer
 		    writer.flush();
 		    writer.close();

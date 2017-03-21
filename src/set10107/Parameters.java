@@ -15,7 +15,7 @@ public class Parameters {
 	public final static int maxGeneration = 10000;
 	public final static double exitError = 0.0; // terminate if MSE smaller than this value
 	public final static double mutateRate = 0.20; // mutation rate for mutation operator
-	//public final static double mutateChange = 0.01; // mutation rate for mutation operator
+	public final static double mutateChange = 0.01; // mutation rate for mutation operator
 	public static final long seed = System.currentTimeMillis();
 	public static double[][] trainData;
 	public static double[][] testData;
