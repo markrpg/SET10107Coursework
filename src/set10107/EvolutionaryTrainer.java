@@ -16,7 +16,12 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, NoSuchFieldException 
 	{
 		//Datasets to use for function approximation
-		String[] dataSets = {"A","B","C"};
+		String[] dataSets = 
+			{
+					"A",
+					"B",
+					"C"
+			};
 		
 		//Operator Variations to run
 		String[] operatorVariations = 
