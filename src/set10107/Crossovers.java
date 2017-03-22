@@ -70,7 +70,7 @@ public class Crossovers
 	{
 		int numGenes = parent1.chromosome.length;
 		int crossPoint = Parameters.random.nextInt(numGenes);
-		int crossPoint2 = Parameters.random.nextInt(numGenes - crossPoint);
+		int crossPoint2 = Parameters.random.nextInt(numGenes - crossPoint) + crossPoint;
 		
 		Individual child1 = new Individual();
 		Individual child2 = new Individual();
@@ -82,7 +82,7 @@ public class Crossovers
 			child1.chromosome[i] = parent1.chromosome[i];
 			child2.chromosome[i] = parent2.chromosome[i];
 			} 
-			else if(i < (numGenes - crossPoint2))
+			else if(i < crossPoint2)
 			{
 		    child1.chromosome[i] = parent2.chromosome[i];
 		    child2.chromosome[i] = parent1.chromosome[i];

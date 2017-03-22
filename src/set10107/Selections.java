@@ -28,17 +28,18 @@ public class Selections
 		//Get total fitness
 		double totalFitness = 0;
 		for(int i = 0; i < Parameters.popSize; ++i)
-			totalFitness += population[i].error;
+			totalFitness += 1.0d - population[i].error;
 		
 		//Get slice value
 		double sliceValue = Math.abs(new Random().nextDouble() * totalFitness);
 		
-		//Hold selection index
-		int j = 0;
-		
 		//Select individual
-		for(j = 0; j < Parameters.popSize && sliceValue > 0; ++j) sliceValue -= Math.abs(population[j].error);
-		return population[Parameters.popSize - j];
+		for(int j = 0; j < Parameters.popSize; ++j){
+			sliceValue -= 1.0d - Math.abs(population[j].error);
+			if(sliceValue <= 0.0d)
+				return population[j];
+		}
+		return population[Parameters.random.nextInt(Parameters.popSize)];
 	}
 	
 	/**

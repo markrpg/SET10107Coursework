@@ -156,10 +156,10 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 			Individual[] elites = performPopulationElitism(population).clone();
 			
 			//Add 50% of the elites to population for selection, mutation, crossover
-			for(int i = 0; i<(int)Math.abs(Parameters.eliteNum * 0.5); ++i)
+			for(int i = 0; i<(int)(Parameters.eliteNum * 0.5); ++i)
 			{
 				//Randomly insert elites into the population
-				int random = Parameters.random.nextInt(population.length - 1);
+				int random = Parameters.random.nextInt(population.length/2);
 				population[random] = elites[i];
 			}
 			
@@ -174,10 +174,10 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 			children = 	(Individual[]) mutation.invoke(null, (Object)children);
 			
 			//Add other 50% of the elites to population randomly
-			for(int i = (int)Math.abs(Parameters.eliteNum * 0.5); i<Parameters.eliteNum; ++i)
+			for(int i = (int)(Parameters.eliteNum * 0.5); i<Parameters.eliteNum; ++i)
 			{
-				//Randomly insert 5% of elites into the population
-				int random = Parameters.random.nextInt(population.length - 1);
+				//Randomly insert 50% of elites into the population
+				int random = Parameters.random.nextInt(population.length/2) + population.length/2;
 				population[random] = elites[i];
 			}
 			

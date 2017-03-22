@@ -20,8 +20,8 @@ public class Mutations
 		{
 			if(rand.nextDouble() < Parameters.mutateRate)
 			{
-				child1.chromosome[i] = Parameters.minGene + Math.random() * (Parameters.minGene - Parameters.maxGene);
-				child2.chromosome[i] = Parameters.minGene + Math.random() * (Parameters.minGene - Parameters.maxGene);
+				child1.chromosome[i] = Parameters.minGene + Math.random() * (Parameters.maxGene - Parameters.minGene);
+				child2.chromosome[i] = Parameters.minGene + Math.random() * (Parameters.maxGene - Parameters.minGene);
 			}		
 
 		}
@@ -48,23 +48,8 @@ public class Mutations
 		{
 			if(rand.nextDouble() < Parameters.mutateRate)
 			{
-				if(child1.chromosome[i] < -1)
-				{
-					child1.chromosome[i] = Math.abs(child1.chromosome[i]);
-				}
-				else
-				{
-					child1.chromosome[i] = child1.chromosome[i] *= -1;
-				}
-				
-				if(child2.chromosome[i] < -1)
-				{
-					child1.chromosome[i] = child2.chromosome[i] *= 1;
-				}
-				else
-				{
-					child2.chromosome[i] = Math.abs(child1.chromosome[i]);
-				}
+				child1.chromosome[i] = Math.min(Parameters.maxGene, Math.max(Parameters.minGene, child1.chromosome[i] * -1));
+				child2.chromosome[i] = Math.min(Parameters.maxGene, Math.max(Parameters.minGene, child2.chromosome[i] * -1));
 			}		
 
 		}
