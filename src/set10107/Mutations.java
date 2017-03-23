@@ -13,8 +13,8 @@ public class Mutations
 	{
 		Random rand = new Random();
 		
-		Individual child1 = new Individual();
-		Individual child2 = new Individual();
+		Individual child1 = children[0];
+		Individual child2 = children[1];
 		
 		for(int i = 0; i < child1.chromosome.length; ++i )
 		{
@@ -41,8 +41,8 @@ public class Mutations
 	{
 		Random rand = new Random();
 		
-		Individual child1 = new Individual();
-		Individual child2 = new Individual();
+		Individual child1 = children[0];
+		Individual child2 = children[1];
 		
 		for(int i = 0; i < child1.chromosome.length; ++i )
 		{

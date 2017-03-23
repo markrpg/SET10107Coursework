@@ -1,7 +1,7 @@
 package set10107;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -154,6 +154,7 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 		{
 			//Get E
 			Individual[] elites = performPopulationElitism(population).clone();
+			Arrays.sort(population, Collections.reverseOrder());
 			
 			//Add 50% of the elites to population for selection, mutation, crossover
 			for(int i = 0; i<(int)(Parameters.eliteNum * 0.5); ++i)
@@ -237,7 +238,6 @@ public class EvolutionaryTrainer extends NeuralNetwork {
 	 * @param dataSet - the dataset being used
 	 * @throws IOException 
 	 */
-	@SuppressWarnings("resource")
 	private static void writeOutputCSV(String dataSet, String operatorVariation, Individual[] outputIndividuals) throws IOException
 	{
 		//If individual dataset print

@@ -22,8 +22,8 @@ public class Crossovers
 		for (int i = 0; i < numGenes; ++i)
 			child2.chromosome[i] = parent2.chromosome[i];
 
-		mutate(child1);
-		mutate(child2);
+		//mutate(child1);
+		//mutate(child2);
 
 		Individual[] result = new Individual[2];
 		result[0] = child1;
