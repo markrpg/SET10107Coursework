@@ -1,7 +1,7 @@
-A,ST_UMUT_CDP,0.01876909323838412
-Hidden Layer Count: 4
+B,ST_UMUT_CDP,1.3246937378289115E-5
+Hidden Layer Count: 8
 Population Size: 50
 Exit Error: 0.0
 Mutation Rate: 0.1
 Tournament Selection Number: 6
-Elite Population Size: 5
+Elite Population Size: 2

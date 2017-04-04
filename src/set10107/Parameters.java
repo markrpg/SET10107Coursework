@@ -7,7 +7,7 @@ import set10107.data.Reader;
 public class Parameters {
 
 	public static int numInput = 1;
-	public static int numHidden = 4;
+	public static int numHidden = 6;
 	public static int numOutput = 1;
 	public final static double minGene = -5; // specifies minimum and maximum weight values
 	public final static double maxGene = +5;
